@@ -6,29 +6,9 @@
 /*   By: rabduras <rabduras@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/08 12:19:58 by rabduras          #+#    #+#             */
-/*   Updated: 2020/01/13 15:08:55 by rabduras         ###   ########.fr       */
+/*   Updated: 2020/01/13 18:42:20 by rabduras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-// typedef struct s_mlx
-// {
-//     void *mlx_ptr;
-//     void *mlx_window;
-// } t_mlx;
-
-
-// t_mlx *new_mlx(void *mlx_ptr, void *mlx_window)
-// {
-//     t_mlx *mlx;
-
-//     if ((mlx = (t_mlx*)malloc(sizeof(t_mlx))) == NULL)
-//         return (NULL);
-//     mlx->mlx_ptr = mlx_ptr;
-//     mlx->mlx_window = mlx_window;
-//     return (mlx);
-// }
-
-// #include <stdio.h>
 
 // int keybord_process(int key, void *param)
 // {
@@ -73,54 +53,61 @@
 } */
 #include "fdf.h"
 
-void setPixel(int x, int y, t_fdf *fdf)
-{
-	fdf->img->data[x * 4 + 4 * fdf->width * y] = 0xFFFFFF;
-}
+#define MAX(a, b) (a > b ? a : b)
 
-void drawLine(int x0, int y0, int x1, int y1, t_fdf *fdf) {
+// void setPixel(int x, int y, t_fdf *fdf)
+// {
+// 	fdf->img.data[y * fdf->width + x] = 0xFFFFFF;
+// }
 
-	int dx = abs(x1-x0), sx = x0<x1 ? 1 : -1;
-	int dy = abs(y1-y0), sy = y0<y1 ? 1 : -1;
-	int err = (dx>dy ? dx : -dy)/2, e2;
+void drawLine(float x, float y, float x1, float y1, t_fdf *fdf) {
+	float x_step;
+	float y_step;
+	int max;
 
-	for(;;){
-		setPixel(x0, y0, fdf);
-		if (x0==x1 && y0==y1) break;
-		e2 = err;
-		if (e2 >-dx) { err -= dy; x0 += sx; }
-		if (e2 < dy) { err += dx; y0 += sy; }
+	x_step = x1 - x;
+	y_step = y1 - y;
+	max = MAX(fabs(x_step), fabs(y_step));
+	x_step /= max;
+	y_step /= max;
+	while ((int)(x - x1) || (int)(y - y1))
+	{
+		//mlx_pixel_put(fdf->mlx_ptr, fdf->win_ptr, x, y, 0xFFFFFF);
+		///fdf->img.data[(int)y * fdf->width + (int)x] = 0xFFFFFF;
+		x += x_step;
+		y += y_step;
 	}
+
 }
 
 int main(int argc, char **argv)
 {
-	int		i;
-	int		j;
+	//int		i;
+	//int		j;
 	t_fdf	*fdf;
 
 	if (argc > 1)
 	{
 		if ((fdf = readFile(argv[1])) == NULL)
 			exit(1);
+		//i = 0;
 		fdf->mlx_ptr = mlx_init();
 		fdf->win_ptr = mlx_new_window(fdf->mlx_ptr, WIN_WIDTH, WIN_HEIGHT, "FdF");
-		fdf->img->img_ptr = mlx_new_image(fdf->mlx_ptr, WIN_WIDTH, WIN_HEIGHT);
-		fdf->img->data = (int *)mlx_get_data_addr(fdf->img->img_ptr, &fdf->img->bpp, &fdf->img->size_l,
-			&fdf->img->endian);
-		i = 0;
-		while (i < fdf->height)
-		{
-			j = 0;
-			while (j < fdf->width)
-			{
-				drawLine(fdf->data[i][j], fdf->data[i][j], fdf->data[i][j + 1], fdf->data[i][j + 1], fdf);
-				drawLine(fdf->data[i][j], fdf->data[i][j], fdf->data[i + 1][j], fdf->data[i + 1][j], fdf);
-				j++;
-			}
-			i++;
-		}
-		mlx_put_image_to_window(fdf->mlx_ptr, fdf->win_ptr, fdf->img->img_ptr, 0, 0);
+		//fdf->img.img_ptr = mlx_new_image(fdf->mlx_ptr, 1000, 1000);
+		//fdf->img.data = (int *)mlx_get_data_addr(fdf->img.img_ptr, &fdf->img.bpp, &fdf->img.size_l, &fdf->img.endian);
+		drawLine(10, 10, 500, 100, fdf);
+		// while (i < 10*(fdf->height - 1))
+		// {
+		// 	j = 0;
+		// 	while (j < 10*(fdf->width - 1))
+		// 	{
+		// 		drawLine(10*j, 10*i, 10*(j + 1), 10*i, fdf);
+		// 		drawLine(10*j, 10*i, 10*j, 10*(i + 1), fdf);
+		// 		j++;
+		// 	}
+		// 	i++;
+		// }
+		//mlx_put_image_to_window(fdf->mlx_ptr, fdf->win_ptr, fdf->img.img_ptr, 0, 0);
 		mlx_loop(fdf->mlx_ptr);
 	}
 	return (0);

@@ -26,7 +26,7 @@ typedef struct	s_fdf
 	int			width;
 	int			height;
 	int			**data;
-	t_img		*img;
+	t_img		img;
 }				t_fdf;
 
 t_fdf			*readFile(char *filename);
