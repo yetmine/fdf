@@ -25,6 +25,7 @@ typedef struct	s_fdf
 	void		*win_ptr;
 	int			width;
 	int			height;
+	int			zoom;
 	int			**data;
 	t_img		img;
 }				t_fdf;

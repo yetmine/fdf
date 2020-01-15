@@ -6,7 +6,7 @@
 /*   By: rabduras <rabduras@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/10 13:11:56 by rabduras          #+#    #+#             */
-/*   Updated: 2020/01/13 15:02:46 by rabduras         ###   ########.fr       */
+/*   Updated: 2020/01/14 14:00:34 by rabduras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ t_fdf			*readFile(char *filename)
 
 	if ((fdf = (t_fdf*)malloc(sizeof(t_fdf))) == NULL)
 		return (NULL);
+	fdf->zoom = 20;
 	if ((fd = open(filename, O_RDONLY)) < 0)
 		return (NULL);
 	if ((fdf = getDimensions(fd, fdf)) == NULL)
