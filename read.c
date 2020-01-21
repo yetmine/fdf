@@ -6,7 +6,7 @@
 /*   By: rabduras <rabduras@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/10 13:11:56 by rabduras          #+#    #+#             */
-/*   Updated: 2020/01/16 15:20:09 by rabduras         ###   ########.fr       */
+/*   Updated: 2020/01/21 15:16:08 by rabduras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,17 +20,17 @@ static t_fdf	*parseData(int fd, t_fdf *fdf)
 	char	**split;
 
 	i = 0;
-	if ((fdf->data = (int**)malloc(sizeof(int*) * fdf->height)) == NULL)
+	if ((fdf->map.data = (int**)malloc(sizeof(int*) * fdf->map.height)) == NULL)
 		return (NULL);
 	while (get_next_line(fd, &line))
 	{
 		j = -1;
-		if ((fdf->data[i] = (int*)malloc(sizeof(int) * fdf->width)) == NULL)
+		if ((fdf->map.data[i] = (int*)malloc(sizeof(int) * fdf->map.width)) == NULL)
 			return (NULL);
 		split = ft_strsplit(line, ' ');
 		while (split[++j])
 		{
-			fdf->data[i][j] = ft_atoi(split[j]);
+			fdf->map.data[i][j] = ft_atoi(split[j]);
 			ft_strdel(&split[j]);
 		}
 		i++;
@@ -46,17 +46,17 @@ static t_fdf	*getDimensions(int fd, t_fdf *fdf)
 	char	**split;
 
 	i = -1;
-	fdf->width = 0;
-	fdf->height = 0;
+	fdf->map.width = 0;
+	fdf->map.height = 0;
 	while (get_next_line(fd, &line) > 0)
 	{
-		fdf->height++;
-		if (fdf->width == 0)
+		fdf->map.height++;
+		if (fdf->map.width == 0)
 		{
 			split = ft_strsplit(line, ' ');
 			while (split[++i])
 			{
-				fdf->width++;
+				fdf->map.width++;
 				ft_strdel(&split[i]);
 			}
 			free(split);
