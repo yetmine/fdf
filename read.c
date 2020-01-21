@@ -6,7 +6,7 @@
 /*   By: rabduras <rabduras@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/10 13:11:56 by rabduras          #+#    #+#             */
-/*   Updated: 2020/01/14 14:00:34 by rabduras         ###   ########.fr       */
+/*   Updated: 2020/01/16 15:20:09 by rabduras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,23 +66,21 @@ static t_fdf	*getDimensions(int fd, t_fdf *fdf)
 	return (fdf);
 }
 
-t_fdf			*readFile(char *filename)
+int				readFile(char *filename, t_fdf *fdf)
 {
 	int		fd;
-	t_fdf	*fdf;
 
 	if ((fdf = (t_fdf*)malloc(sizeof(t_fdf))) == NULL)
-		return (NULL);
-	fdf->zoom = 20;
+		return (0);
 	if ((fd = open(filename, O_RDONLY)) < 0)
-		return (NULL);
+		return (0);
 	if ((fdf = getDimensions(fd, fdf)) == NULL)
-		return (NULL);
+		return (0);
 	close(fd);
 	if ((fd = open(filename, O_RDONLY)) < 0)
-		return (NULL);
+		return (0);
 	if ((fdf = parseData(fd, fdf)) == NULL)
-		return (NULL);
+		return (0);
 	close(fd);
-	return (fdf);
+	return (1);
 }
