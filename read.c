@@ -6,7 +6,7 @@
 /*   By: rabduras <rabduras@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/10 13:11:56 by rabduras          #+#    #+#             */
-/*   Updated: 2020/01/21 15:16:08 by rabduras         ###   ########.fr       */
+/*   Updated: 2020/01/22 16:17:14 by rabduras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,45 +42,48 @@ static t_fdf	*parseData(int fd, t_fdf *fdf)
 static t_fdf	*getDimensions(int fd, t_fdf *fdf)
 {
 	int		i;
+	int		width;
 	char	*line;
 	char	**split;
 
-	i = -1;
-	fdf->map.width = 0;
 	fdf->map.height = 0;
 	while (get_next_line(fd, &line) > 0)
 	{
+		i = -1;
+		width = 0;
 		fdf->map.height++;
-		if (fdf->map.width == 0)
+		split = ft_strsplit(line, ' ');
+		while (split[++i])
 		{
-			split = ft_strsplit(line, ' ');
-			while (split[++i])
-			{
-				fdf->map.width++;
-				ft_strdel(&split[i]);
-			}
-			free(split);
+			width++;
+			ft_strdel(&split[i]);
 		}
+		free(split);
 		ft_strdel(&line);
+		if (fdf->map.height == 1)
+			fdf->map.width = width;
+		else if (fdf->map.width != width)
+			return (NULL);
 	}
 	return (fdf);
 }
 
-int				readFile(char *filename, t_fdf *fdf)
+t_fdf			*readFile(char *file)
 {
 	int		fd;
+	t_fdf	*fdf;
 
+	if ((fd = open(file, O_RDONLY)) < 0)
+		return (NULL);
 	if ((fdf = (t_fdf*)malloc(sizeof(t_fdf))) == NULL)
-		return (0);
-	if ((fd = open(filename, O_RDONLY)) < 0)
-		return (0);
+		return (NULL);
 	if ((fdf = getDimensions(fd, fdf)) == NULL)
-		return (0);
+		return (NULL);
 	close(fd);
-	if ((fd = open(filename, O_RDONLY)) < 0)
-		return (0);
+	if ((fd = open(file, O_RDONLY)) < 0)
+		return (NULL);
 	if ((fdf = parseData(fd, fdf)) == NULL)
-		return (0);
+		return (NULL);
 	close(fd);
-	return (1);
+	return (fdf);
 }
