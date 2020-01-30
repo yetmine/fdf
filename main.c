@@ -6,27 +6,11 @@
 /*   By: rabduras <rabduras@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/08 12:19:58 by rabduras          #+#    #+#             */
-/*   Updated: 2020/01/29 16:21:18 by rabduras         ###   ########.fr       */
+/*   Updated: 2020/01/30 12:06:33 by rabduras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
-
-static void putBackground(t_fdf *fdf)
-{
-	int	i;
-
-	i = 0;
-	while (i < fdf->img.size_l * WIN_HEIGHT)
-	{
-		fdf->img.data[i + 3] = (unsigned char)0;
-		fdf->img.data[i + 2] = (unsigned char)(B_COLOR >> 16);
-		fdf->img.data[i + 1] = (unsigned char)((B_COLOR & 65280) >> 8);
-		fdf->img.data[i] = (unsigned char)B_COLOR & 255;
-		i += 4;
-	}
-	mlx_put_image_to_window(fdf->mlx_ptr, fdf->win_ptr, fdf->img.img_ptr, 0, 0);
-}
 
 static void createImage(t_fdf *fdf)
 {
@@ -41,25 +25,19 @@ static void createImage(t_fdf *fdf)
 static void createWindow(t_fdf *fdf, char *name)
 {
 	fdf->mlx_ptr = mlx_init();
-	fdf->win_ptr = mlx_new_window(fdf->mlx_ptr, WIN_WIDTH, WIN_HEIGHT, name);
+	fdf->win_ptr = mlx_new_window(fdf->mlx_ptr, WIN_WIDTH,
+		WIN_HEIGHT, ft_strjoin("FdF ", name));
 }
 
 static void	setDefaults(t_fdf *fdf)
 {
-	fdf->angleX = DEF_AX;
-	fdf->angleY = DEF_AY;
-	fdf->angleZ = DEF_AZ;
-	fdf->scale = DEF_SCALE;
-	fdf->events.scale_mult = 1;
+	AX = DEF_AX;
+	AY = DEF_AY;
+	AZ = DEF_AZ;
 	SHX = DEF_SHX;
 	SHY = DEF_SHY;
-}
-
-void redraw(t_fdf *fdf)
-{
-	putBackground(fdf);
-	drawImage(fdf);
-	mlx_put_image_to_window(fdf->mlx_ptr, fdf->win_ptr, fdf->img.img_ptr, 0, 0);
+	fdf->scale = DEF_SCALE;
+	fdf->scale_mult = 1;
 }
 
 int main(int argc, char **argv)
@@ -70,14 +48,15 @@ int main(int argc, char **argv)
 		error("usage: ./fdf [map.fdf]");
 	if (!(fdf = readFile(argv[1])))
 		error("Invalid map or file doesn't exist.");
+	setLinearCoefficients(fdf);
 	createWindow(fdf, argv[1]);
 	createImage(fdf);
 	setDefaults(fdf);
 	redraw(fdf);
 	mlx_hook(fdf->win_ptr, 2, 0, &keyPress, (void *)fdf);
-	mlx_hook(fdf->win_ptr, 4, 0, &mouse_press, (void *)fdf);
-	mlx_hook(fdf->win_ptr, 6, 0, &mouse_move, (void *)fdf);
-	mlx_hook(fdf->win_ptr, 5, 0, &mouse_release, (void *)fdf);
+	mlx_hook(fdf->win_ptr, 4, 0, &mousePress, (void *)fdf);
+	mlx_hook(fdf->win_ptr, 6, 0, &mouseMove, (void *)fdf);
+	mlx_hook(fdf->win_ptr, 5, 0, &mouseRelease, (void *)fdf);
 	mlx_loop(fdf->mlx_ptr);
 	return (0);
 }

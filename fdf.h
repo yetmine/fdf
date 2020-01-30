@@ -69,11 +69,9 @@ typedef struct	s_window
 
 typedef struct	s_rgb_kb
 {
-	float		a;
 	float		r;
 	float		g;
 	float		b;
-
 }				t_rgb_kb;
 
 typedef struct s_z_peak
@@ -108,7 +106,6 @@ typedef struct	s_events
 	char			mouse_1_press;	// bool for L click pressed;
 	char			perspective;	// bool for perspective;
 	char			help;			// bool for view help;
-	int				scale_mult;		// scale multiplyer for scroll;
 }				t_events;
 
 typedef struct	s_fdf
@@ -119,6 +116,7 @@ typedef struct	s_fdf
 	double		angleY;
 	double		angleZ;
 	int			scale;
+	int			scale_mult;			// scale multiplyer for scroll;
 	t_rgb_kb	coeff_k;
 	t_rgb_kb	coeff_b;
 	t_xy		current;
@@ -132,13 +130,14 @@ typedef struct	s_fdf
 t_fdf			*readFile(char *file);
 void			error(char *message);
 void			redraw(t_fdf *fdf);
-int				keyPress(int key, void *param);
-void			drawImage(t_fdf *fdf);
 t_line			transform(t_fdf *fdf, int dx, int dy);
-int				ft_min(t_map map);
-int				ft_max(t_map map);
-int				mouse_release(int key, int x, int y, void *param);
-int 			mouse_press(int key, int x, int y, void *param);
-int				mouse_move(int x, int y, void *param);
+void			setLinearCoefficients(t_fdf *fdf);
+int				getColor(t_fdf *fdf, t_line line, int delta, int i);
+int				keyPress(int key, void *param);
+int				mouseRelease(int key, int x, int y, void *param);
+int 			mousePress(int key, int x, int y, void *param);
+int				mouseMove(int x, int y, void *param);
+int				ftMin(t_map map);
+int				ftMax(t_map map);
 
 #endif

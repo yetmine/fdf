@@ -6,48 +6,13 @@
 /*   By: rabduras <rabduras@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/27 15:50:04 by rabduras          #+#    #+#             */
-/*   Updated: 2020/01/29 17:16:47 by rabduras         ###   ########.fr       */
+/*   Updated: 2020/01/30 12:08:59 by rabduras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-int					color(t_fdf *fdf, t_line line, int delta, int i)
-{
-	int		c;
-	float	r;
-	float	g;
-	float	b;
-
-	if (line.c0 > line.c1)
-	{
-		r = (((float)line.c0 - fabsf(((float)(line.c1 - line.c0) /
-			(float)delta) * i)) - fdf->coeff_b.r) / fdf->coeff_k.r;
-		g = (((float)line.c0 - fabsf(((float)(line.c1 - line.c0) /
-		(float)delta) * i)) - fdf->coeff_b.g) / fdf->coeff_k.g;
-		b = (((float)line.c0 - fabsf(((float)(line.c1 - line.c0) /
-			(float)delta) * i)) - fdf->coeff_b.b) / fdf->coeff_k.b;
-	}
-	else
-	{
-		r = (((float)line.c0 + fabsf(((float)(line.c1 - line.c0) /
-		(float)delta) * i)) - fdf->coeff_b.r) / fdf->coeff_k.r;
-		g = (((float)line.c0 + fabsf(((float)(line.c1 - line.c0) /
-			(float)delta) * i)) - fdf->coeff_b.g) / fdf->coeff_k.g;
-		b = (((float)line.c0 + fabsf(((float)(line.c1 - line.c0) /
-		(float)delta) * i)) - fdf->coeff_b.b) / fdf->coeff_k.b;
-	}
-	c = ((int)r << 16) + ((int)g << 8) + b;
-
-	//	if the map is flat;
-	if (fdf->coeff_k.r == 0 && fdf->coeff_k.g == 0 && fdf->coeff_k.b == 0
-		&& fdf->coeff_b.r == 0 && fdf->coeff_b.g == 0 && fdf->coeff_b.b == 0)
-		c = DEF_BS_C;
-	c += 0 << 24;
-	return (c);
-}
-
-void drawPixel(t_fdf *fdf, int x, int y, int c)
+static void	drawPixel(t_fdf *fdf, int x, int y, int c)
 {
 	if ( (y >= WIN_HEIGHT) || (x * 4 > fdf->img.size_l) || y < 0 ||
 			x * 4 < 0)
@@ -62,7 +27,7 @@ void drawPixel(t_fdf *fdf, int x, int y, int c)
 		(unsigned char)(c & 0xFF);
 }
 
-void drawLine(t_fdf *fdf, t_line line)
+static void	drawLine(t_fdf *fdf, t_line line)
 {
 	t_xy	delta;
 	int		i;
@@ -78,18 +43,18 @@ void drawLine(t_fdf *fdf, t_line line)
 		{
 			d = (float)i / delta.x;
 			drawPixel(fdf, line.x0 + copysign(i, delta.x), line.y0 +
-				copysign(round(d * delta.y), delta.y), color(fdf, line, delta.x, i));
+				copysign(round(d * delta.y), delta.y), getColor(fdf, line, delta.x, i));
 		}
 	else
 		while (++i < abs(delta.y))
 		{
 			d = (float)i / delta.y;
 			drawPixel(fdf, line.x0 + copysign(round(d * delta.x), delta.x),
-				line.y0 + copysign(i, delta.y), color(fdf, line, delta.y, i));
+				line.y0 + copysign(i, delta.y), getColor(fdf, line, delta.y, i));
 		}
 }
 
-void drawImage(t_fdf *fdf)
+static void	drawImage(t_fdf *fdf)
 {
 	fdf->current.y = 0;
 	while (fdf->current.y < fdf->map.height)
@@ -105,4 +70,28 @@ void drawImage(t_fdf *fdf)
 		}
 		fdf->current.y++;
 	}
+}
+
+static void putBackground(t_fdf *fdf)
+{
+	int	i;
+
+	i = 0;
+	while (i < fdf->img.size_l * WIN_HEIGHT)
+	{
+		fdf->img.data[i + 3] = 0;
+		fdf->img.data[i + 2] = (unsigned char)((B_COLOR >> 16) & 255);
+		fdf->img.data[i + 1] = (unsigned char)((B_COLOR >> 8) & 255);
+		fdf->img.data[i] = (unsigned char)B_COLOR & 255;
+		i += 4;
+	}
+	mlx_put_image_to_window(fdf->mlx_ptr, fdf->win_ptr,
+		fdf->img.img_ptr, 0, 0);
+}
+
+void		redraw(t_fdf *fdf)
+{
+	putBackground(fdf);
+	drawImage(fdf);
+	mlx_put_image_to_window(fdf->mlx_ptr, fdf->win_ptr, fdf->img.img_ptr, 0, 0);
 }

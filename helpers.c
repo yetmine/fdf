@@ -6,13 +6,13 @@
 /*   By: rabduras <rabduras@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/29 11:54:01 by rabduras          #+#    #+#             */
-/*   Updated: 2020/01/29 12:03:10 by rabduras         ###   ########.fr       */
+/*   Updated: 2020/01/30 11:19:32 by rabduras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-int	ft_min(t_map map)
+int	ftMin(t_map map)
 {
 	int	i;
 	int	j;
@@ -32,7 +32,7 @@ int	ft_min(t_map map)
 	return (min);
 }
 
-int	ft_max(t_map map)
+int	ftMax(t_map map)
 {
 	int	i;
 	int	j;

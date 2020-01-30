@@ -6,7 +6,7 @@
 /*   By: rabduras <rabduras@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/28 15:12:30 by rabduras          #+#    #+#             */
-/*   Updated: 2020/01/29 16:51:48 by rabduras         ###   ########.fr       */
+/*   Updated: 2020/01/30 12:05:35 by rabduras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ static void	rotateZ(t_fdf *fdf, t_line *line, int dx, int dy)
 	line->z1 = (float)MAP_CONV[Y + dy][X + dx];
 }
 
-void			perspective(t_line *line)
+static void	perspective(t_line *line)
 {
 	t_xy	old0;
 	t_xy	old1;
