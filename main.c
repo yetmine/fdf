@@ -6,7 +6,7 @@
 /*   By: rabduras <rabduras@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/08 12:19:58 by rabduras          #+#    #+#             */
-/*   Updated: 2020/01/30 16:33:02 by rabduras         ###   ########.fr       */
+/*   Updated: 2020/01/31 13:37:22 by rabduras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,12 @@ static void	create_window(t_fdf *fdf, char *name)
 
 void		set_defaults(t_fdf *fdf)
 {
-	AX = DEF_AX;
-	AY = DEF_AY;
-	AZ = DEF_AZ;
-	SHX = DEF_SHX;
-	SHY = DEF_SHY;
-	fdf->scale = DEF_SCALE;
+	fdf->angle_x = AX;
+	fdf->angle_y = AY;
+	fdf->angle_z = AZ;
+	fdf->shift.x = SHX;
+	fdf->shift.y = SHY;
+	fdf->scale = SCALE;
 	fdf->scale_mult = 1;
 }
 

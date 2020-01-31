@@ -6,7 +6,7 @@
 /*   By: rabduras <rabduras@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/10 13:11:56 by rabduras          #+#    #+#             */
-/*   Updated: 2020/01/30 16:48:02 by rabduras         ###   ########.fr       */
+/*   Updated: 2020/01/31 13:45:23 by rabduras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,18 +20,19 @@ static t_fdf	*parse_data(int fd, t_fdf *fdf)
 	char	**split;
 
 	i = 0;
-	MAP = (int**)malloc(sizeof(int*) * fdf->map.height);
-	MAP_CONV = (double**)malloc(sizeof(double*) * fdf->map.height);
+	fdf->map.data = (int**)malloc(sizeof(int*) * fdf->map.height);
+	fdf->map.data_conv = (double**)malloc(sizeof(double*) * fdf->map.height);
 	while (get_next_line(fd, &line))
 	{
 		j = -1;
-		MAP[i] = (int*)malloc(sizeof(int) * fdf->map.width);
-		MAP_CONV[i] = (double*)malloc(sizeof(double) * fdf->map.width);
+		fdf->map.data[i] = (int*)malloc(sizeof(int) * fdf->map.width);
+		fdf->map.data_conv[i] = (double*)malloc(sizeof(double)
+			* fdf->map.width);
 		split = ft_strsplit(line, ' ');
 		while (split[++j])
 		{
-			MAP[i][j] = ft_atoi(split[j]);
-			MAP_CONV[i][j] = (double)MAP[i][j];
+			fdf->map.data[i][j] = ft_atoi(split[j]);
+			fdf->map.data_conv[i][j] = (double)fdf->map.data[i][j];
 			ft_strdel(&split[j]);
 		}
 		i++;

@@ -6,7 +6,7 @@
 /*   By: rabduras <rabduras@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/30 15:54:43 by rabduras          #+#    #+#             */
-/*   Updated: 2020/01/30 16:32:31 by rabduras         ###   ########.fr       */
+/*   Updated: 2020/01/31 13:46:42 by rabduras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,11 @@ int			close_window(void *param)
 	mlx_destroy_window(fdf->mlx_ptr, fdf->win_ptr);
 	while (++i < fdf->map.height)
 	{
-		free(MAP[i]);
-		free(MAP_CONV[i]);
+		free(fdf->map.data[i]);
+		free(fdf->map.data_conv[i]);
 	}
-	free(MAP);
-	free(MAP_CONV);
+	free(fdf->map.data);
+	free(fdf->map.data_conv);
 	free(fdf);
 	exit(0);
 	return (0);
@@ -40,13 +40,15 @@ int			mouse_move(int x, int y, void *param)
 	fdf = (t_fdf*)param;
 	if (fdf->events.mouse_3_press)
 	{
-		SHX = x - fdf->events.mouse_xy.x + SHX;
-		SHY = y - fdf->events.mouse_xy.y + SHY;
+		fdf->shift.x = x - fdf->events.mouse_xy.x + fdf->shift.x;
+		fdf->shift.y = y - fdf->events.mouse_xy.y + fdf->shift.y;
 	}
 	if (fdf->events.mouse_1_press)
 	{
-		AZ = AZ + (float)(x - fdf->events.mouse_xy.x) / 150.0;
-		AX = AX + (float)(y - fdf->events.mouse_xy.y) / 150.0;
+		fdf->angle_z = fdf->angle_z + (float)(x - fdf->events.mouse_xy.x)
+		/ 150.0;
+		fdf->angle_x = fdf->angle_x + (float)(y - fdf->events.mouse_xy.y)
+		/ 150.0;
 	}
 	fdf->events.mouse_xy.x = x;
 	fdf->events.mouse_xy.y = y;

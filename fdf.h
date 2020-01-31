@@ -6,7 +6,7 @@
 /*   By: rabduras <rabduras@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/30 16:51:26 by rabduras          #+#    #+#             */
-/*   Updated: 2020/01/30 16:57:01 by rabduras         ###   ########.fr       */
+/*   Updated: 2020/01/31 13:37:05 by rabduras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,24 +21,15 @@
 
 # define WIN_WIDTH	1920
 # define WIN_HEIGHT	1080
-# define DEF_SCALE 	30
+# define SCALE		30
 # define B_COLOR 	0x2A2A2A
-# define DEF_BS_C	0xFF0043
-# define DEF_TOP_C	0x00AEFF
-# define DEF_AX		-1.0
-# define DEF_AY		0.0
-# define DEF_AZ		0.75
-# define DEF_SHX	0
-# define DEF_SHY	0
-# define MAP		(fdf->map.data)
-# define MAP_CONV	(fdf->map.data_conv)
-# define X			(fdf->current.x)
-# define Y			(fdf->current.y)
-# define AX			(fdf->angle_x)
-# define AY			(fdf->angle_y)
-# define AZ			(fdf->angle_z)
-# define SHX		(fdf->shift.x)
-# define SHY		(fdf->shift.y)
+# define BT_C		0xFF0043
+# define TOP_C		0x00AEFF
+# define AX			-1.0
+# define AY			0.0
+# define AZ			0.75
+# define SHX		0
+# define SHY		0
 
 typedef struct		s_line
 {

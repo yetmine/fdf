@@ -6,7 +6,7 @@
 /*   By: rabduras <rabduras@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/28 15:12:30 by rabduras          #+#    #+#             */
-/*   Updated: 2020/01/30 16:23:48 by rabduras         ###   ########.fr       */
+/*   Updated: 2020/01/31 13:57:21 by rabduras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,16 +19,20 @@ static void	rotate_x(t_fdf *fdf, t_line *line, int dx, int dy)
 
 	temp0 = line->y0;
 	temp1 = line->y1;
-	line->y0 = (float)line->y0 * cos(AX) +
-		(float)(MAP_CONV[Y][X]) * sin(AX);
-	line->y1 = (float)line->y1 * cos(AX) +
-		(float)(MAP_CONV[Y + dy][X + dx]) * sin(AX);
-	MAP_CONV[Y][X] = (float)-temp0 * sin(AX) +
-		(MAP_CONV[Y][X]) * cos(AX);
-	MAP_CONV[Y + dy][X + dx] = (float)-temp1 * sin(AX) +
-		(MAP_CONV[Y + dy][X + dx]) * cos(AX);
-	line->z0 = MAP_CONV[Y][X];
-	line->z1 = MAP_CONV[Y + dy][X + dx];
+	line->y0 = (float)line->y0 * cos(fdf->angle_x) +
+		(float)(fdf->map.data_conv[fdf->current.y][fdf->current.x])
+		* sin(fdf->angle_x);
+	line->y1 = (float)line->y1 * cos(fdf->angle_x) +
+		(float)(fdf->map.data_conv[fdf->current.y + dy][fdf->current.x + dx])
+		* sin(fdf->angle_x);
+	fdf->map.data_conv[fdf->current.y][fdf->current.x] = (float)-temp0
+		* sin(fdf->angle_x) + (fdf->map.data_conv[fdf->current.y]
+		[fdf->current.x]) * cos(fdf->angle_x);
+	fdf->map.data_conv[fdf->current.y + dy][fdf->current.x + dx] = (float)-temp1
+		* sin(fdf->angle_x) + (fdf->map.data_conv[fdf->current.y + dy]
+		[fdf->current.x + dx]) * cos(fdf->angle_x);
+	line->z0 = fdf->map.data_conv[fdf->current.y][fdf->current.x];
+	line->z1 = fdf->map.data_conv[fdf->current.y + dy][fdf->current.x + dx];
 }
 
 static void	rotate_y(t_fdf *fdf, t_line *line, int dx, int dy)
@@ -38,14 +42,20 @@ static void	rotate_y(t_fdf *fdf, t_line *line, int dx, int dy)
 
 	temp0 = line->x0;
 	temp1 = line->x1;
-	line->x0 = (float)line->x0 * cos(AY) +
-		(float)(MAP[Y][X] * fdf->scale) * sin(AY);
-	line->x1 = (float)line->x1 * cos(AY) +
-		(float)(MAP[Y + dy][X + dx] * fdf->scale) * sin(AY);
-	MAP_CONV[Y][X] = -temp0 * sin(AY) +
-		(float)(MAP[Y][X] * fdf->scale) * cos(AY);
-	MAP_CONV[Y + dy][X + dx] = -temp1 * sin(AY) +
-		(float)(MAP[Y + dy][X + dx] * fdf->scale) * cos(AY);
+	line->x0 = (float)line->x0 * cos(fdf->angle_y) +
+		(float)(fdf->map.data[fdf->current.y][fdf->current.x] * fdf->scale)
+		* sin(fdf->angle_y);
+	line->x1 = (float)line->x1 * cos(fdf->angle_y) +
+		(float)(fdf->map.data[fdf->current.y + dy][fdf->current.x + dx]
+		* fdf->scale) * sin(fdf->angle_y);
+	fdf->map.data_conv[fdf->current.y][fdf->current.x] = -temp0
+		* sin(fdf->angle_y) +
+		(float)(fdf->map.data[fdf->current.y][fdf->current.x]
+		* fdf->scale) * cos(fdf->angle_y);
+	fdf->map.data_conv[fdf->current.y + dy][fdf->current.x + dx] = -temp1
+		* sin(fdf->angle_y) +
+		(float)(fdf->map.data[fdf->current.y + dy][fdf->current.x + dx]
+		* fdf->scale) * cos(fdf->angle_y);
 }
 
 static void	rotate_z(t_fdf *fdf, t_line *line, int dx, int dy)
@@ -53,18 +63,19 @@ static void	rotate_z(t_fdf *fdf, t_line *line, int dx, int dy)
 	float	cx;
 	float	cy;
 
-	cx = (float)X - (float)fdf->map.width / 2 + 0.5;
-	cy = (float)Y - (float)fdf->map.height / 2 + 0.5;
-	line->x0 = ((float)cx * cos(AZ) - (float)cy * sin(AZ)) *
+	cx = (float)fdf->current.x - (float)fdf->map.width / 2 + 0.5;
+	cy = (float)fdf->current.y - (float)fdf->map.height / 2 + 0.5;
+	line->x0 = ((float)cx * cos(fdf->angle_z) - (float)cy
+		* sin(fdf->angle_z)) * (float)fdf->scale;
+	line->y0 = ((float)cx * sin(fdf->angle_z) + (float)cy * cos(fdf->angle_z)) *
 		(float)fdf->scale;
-	line->y0 = ((float)cx * sin(AZ) + (float)cy * cos(AZ)) *
-		(float)fdf->scale;
-	line->x1 = ((float)(cx + dx) * cos(AZ) -
-		(float)(cy + dy) * sin(AZ)) * (float)fdf->scale;
-	line->y1 = ((float)(cx + dx) * sin(AZ) +
-		(float)(cy + dy) * cos(AZ)) * (float)fdf->scale;
-	line->z0 = (float)MAP_CONV[Y][X];
-	line->z1 = (float)MAP_CONV[Y + dy][X + dx];
+	line->x1 = ((float)(cx + dx) * cos(fdf->angle_z) -
+		(float)(cy + dy) * sin(fdf->angle_z)) * (float)fdf->scale;
+	line->y1 = ((float)(cx + dx) * sin(fdf->angle_z) +
+		(float)(cy + dy) * cos(fdf->angle_z)) * (float)fdf->scale;
+	line->z0 = (float)fdf->map.data_conv[fdf->current.y][fdf->current.x];
+	line->z1 = (float)fdf->map.data_conv[fdf->current.y + dy]
+		[fdf->current.x + dx];
 }
 
 static void	perspective(t_line *line)
@@ -97,17 +108,17 @@ t_line		transform(t_fdf *fdf, int dx, int dy)
 	t_line line;
 
 	line.out = 0;
-	line.c0 = (int)MAP[Y][X];
-	line.c1 = (int)MAP[Y + dy][X + dx];
+	line.c0 = (int)fdf->map.data[fdf->current.y][fdf->current.x];
+	line.c1 = (int)fdf->map.data[fdf->current.y + dy][fdf->current.x + dx];
 	rotate_z(fdf, &line, dx, dy);
 	rotate_y(fdf, &line, dx, dy);
 	rotate_x(fdf, &line, dx, dy);
 	if (fdf->events.perspective == 1)
 		perspective(&line);
-	line.x0 += WIN_WIDTH / 2 + SHX;
-	line.x1 += WIN_WIDTH / 2 + SHX;
-	line.y0 += WIN_HEIGHT / 2 + SHY;
-	line.y1 += WIN_HEIGHT / 2 + SHY;
+	line.x0 += WIN_WIDTH / 2 + fdf->shift.x;
+	line.x1 += WIN_WIDTH / 2 + fdf->shift.x;
+	line.y0 += WIN_HEIGHT / 2 + fdf->shift.y;
+	line.y1 += WIN_HEIGHT / 2 + fdf->shift.y;
 	if (((line.x0 > WIN_WIDTH || line.x0 < 0) ||
 		(line.y0 > WIN_HEIGHT || line.y0 < 0)) &&
 		((line.x1 > WIN_WIDTH || line.x1 < 0) ||

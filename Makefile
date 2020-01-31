@@ -29,7 +29,6 @@ fclean: clean
 
 re:	fclean all
 
-
 build:
 	rm -f $(OBJ)
 	rm -f $(NAME)
