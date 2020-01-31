@@ -6,43 +6,32 @@
 /*   By: rabduras <rabduras@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/10 13:11:56 by rabduras          #+#    #+#             */
-/*   Updated: 2020/01/30 12:06:08 by rabduras         ###   ########.fr       */
+/*   Updated: 2020/01/30 16:48:02 by rabduras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-static t_fdf	*parseData(int fd, t_fdf *fdf)
+static t_fdf	*parse_data(int fd, t_fdf *fdf)
 {
 	int		i;
 	int		j;
-	int		n;
 	char	*line;
 	char	**split;
 
 	i = 0;
-	if ((MAP = (int**)malloc(sizeof(int*) * fdf->map.height)) == NULL)
-		return (NULL);
-	if ((MAP_ADJ = (double**)malloc(sizeof(double*) * fdf->map.height)) == NULL)
-		return (NULL);
-	if ((MAP_CONV = (double**)malloc(sizeof(double*) * fdf->map.height)) == NULL)
-		return (NULL);
+	MAP = (int**)malloc(sizeof(int*) * fdf->map.height);
+	MAP_CONV = (double**)malloc(sizeof(double*) * fdf->map.height);
 	while (get_next_line(fd, &line))
 	{
 		j = -1;
-		if ((MAP[i] = (int*)malloc(sizeof(int) * fdf->map.width)) == NULL)
-			return (NULL);
-		if ((MAP_ADJ[i] = (double*)malloc(sizeof(double) * fdf->map.width)) == NULL)
-			return (NULL);
-		if ((MAP_CONV[i] = (double*)malloc(sizeof(double) * fdf->map.width)) == NULL)
-			return (NULL);
+		MAP[i] = (int*)malloc(sizeof(int) * fdf->map.width);
+		MAP_CONV[i] = (double*)malloc(sizeof(double) * fdf->map.width);
 		split = ft_strsplit(line, ' ');
 		while (split[++j])
 		{
-			n = ft_atoi(split[j]);
-			MAP[i][j] = n;
-			MAP_ADJ[i][j] = (double)n;
-			MAP_CONV[i][j] = MAP_ADJ[i][j];
+			MAP[i][j] = ft_atoi(split[j]);
+			MAP_CONV[i][j] = (double)MAP[i][j];
 			ft_strdel(&split[j]);
 		}
 		i++;
@@ -51,7 +40,7 @@ static t_fdf	*parseData(int fd, t_fdf *fdf)
 	return (fdf);
 }
 
-static t_fdf	*getDimensions(int fd, t_fdf *fdf)
+static t_fdf	*get_dimensions(int fd, t_fdf *fdf)
 {
 	int		i;
 	int		width;
@@ -80,7 +69,7 @@ static t_fdf	*getDimensions(int fd, t_fdf *fdf)
 	return (fdf);
 }
 
-t_fdf			*readFile(char *file)
+t_fdf			*read_file(char *file)
 {
 	int		fd;
 	t_fdf	*fdf;
@@ -89,12 +78,12 @@ t_fdf			*readFile(char *file)
 		return (NULL);
 	if ((fdf = (t_fdf*)malloc(sizeof(t_fdf))) == NULL)
 		return (NULL);
-	if ((fdf = getDimensions(fd, fdf)) == NULL)
+	if ((fdf = get_dimensions(fd, fdf)) == NULL)
 		return (NULL);
 	close(fd);
 	if ((fd = open(file, O_RDONLY)) < 0)
 		return (NULL);
-	if ((fdf = parseData(fd, fdf)) == NULL)
+	if ((fdf = parse_data(fd, fdf)) == NULL)
 		return (NULL);
 	close(fd);
 	return (fdf);

@@ -6,28 +6,28 @@
 /*   By: rabduras <rabduras@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/30 12:01:13 by rabduras          #+#    #+#             */
-/*   Updated: 2020/01/30 12:07:44 by rabduras         ###   ########.fr       */
+/*   Updated: 2020/01/30 16:41:36 by rabduras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-void	setLinearCoefficients(t_fdf *fdf)
+void	set_linear_coefficients(t_fdf *fdf)
 {
-	fdf->map.z_max.value = ftMax(fdf->map);
-	fdf->map.z_min.value = ftMin(fdf->map);
+	float k;
+
+	fdf->map.z_max.value = ft_max(fdf->map);
+	fdf->map.z_min.value = ft_min(fdf->map);
 	fdf->map.z_min.r = (DEF_BS_C >> 16);
 	fdf->map.z_min.g = ((DEF_BS_C & 0xFF00) >> 8);
 	fdf->map.z_min.b = (DEF_BS_C & 0xFF);
 	fdf->map.z_max.r = (DEF_TOP_C >> 16);
 	fdf->map.z_max.g = ((DEF_TOP_C & 0xFF00) >> 8);
 	fdf->map.z_max.b = (DEF_TOP_C & 0xFF);
-	fdf->coeff_k.r = ((float)fdf->map.z_min.value - (float)fdf->map.z_max.value /
-		((float)fdf->map.z_min.r - (float)fdf->map.z_max.r));
-	fdf->coeff_k.g = ((float)fdf->map.z_min.value - (float)fdf->map.z_max.value /
-		((float)fdf->map.z_min.g - (float)fdf->map.z_max.g));
-	fdf->coeff_k.b = ((float)fdf->map.z_min.value - (float)fdf->map.z_max.value /
-		((float)fdf->map.z_min.b - (float)fdf->map.z_max.b));
+	k = (float)fdf->map.z_min.value - (float)fdf->map.z_max.value;
+	fdf->coeff_k.r = k / ((float)fdf->map.z_min.r - (float)fdf->map.z_max.r);
+	fdf->coeff_k.g = k / ((float)fdf->map.z_min.g - (float)fdf->map.z_max.g);
+	fdf->coeff_k.b = k / ((float)fdf->map.z_min.b - (float)fdf->map.z_max.b);
 	fdf->coeff_b.r = ((float)fdf->map.z_min.value -
 		fdf->coeff_k.r * (float)fdf->map.z_min.r);
 	fdf->coeff_b.g = (float)fdf->map.z_min.value -
@@ -36,7 +36,7 @@ void	setLinearCoefficients(t_fdf *fdf)
 		fdf->coeff_k.b * (float)fdf->map.z_min.b;
 }
 
-int		getColor(t_fdf *fdf, t_line line, int delta, int i)
+int		get_color(t_fdf *fdf, t_line line, int delta, int i)
 {
 	int		c;
 	float	r;

@@ -1,6 +1,7 @@
 NAME = fdf
 FLAGS = -Wall -Wextra -Werror -I./
-SRC = main.c read.c error.c events.c draw.c projections.c helpers.c color.c
+SRC = main.c read.c error.c events.c draw.c projections.c helpers.c \
+		help.c color.c events2.c
 LIBFT = libft/
 MINILIBX = minilibx/
 

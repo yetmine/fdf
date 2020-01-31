@@ -5,73 +5,35 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: rabduras <rabduras@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/01/27 15:37:33 by rabduras          #+#    #+#             */
-/*   Updated: 2020/01/30 11:17:41 by rabduras         ###   ########.fr       */
+/*   Created: 2020/01/30 15:54:43 by rabduras          #+#    #+#             */
+/*   Updated: 2020/01/30 16:32:31 by rabduras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-static int	closeWindow(t_fdf *fdf)
+int			close_window(void *param)
 {
-	int i;
+	int		i;
+	t_fdf	*fdf;
 
 	i = -1;
+	fdf = (t_fdf*)param;
+	mlx_destroy_image(fdf->mlx_ptr, fdf->img.img_ptr);
 	mlx_destroy_window(fdf->mlx_ptr, fdf->win_ptr);
-	free(fdf->img.img_ptr);
-	free(fdf->img.data);
 	while (++i < fdf->map.height)
 	{
 		free(MAP[i]);
-		free(MAP_ADJ[i]);
 		free(MAP_CONV[i]);
 	}
 	free(MAP);
-	free(MAP_ADJ);
 	free(MAP_CONV);
+	free(fdf);
 	exit(0);
 	return (0);
 }
 
-int		keyPress(int key, void *param)
-{
-	t_fdf *fdf;
-
-	fdf = (t_fdf*)param;
-	//	close programm if ESC
-	if (key == 53)
-		closeWindow(fdf);
-	//	top
-	if (key == 17)
-	{
-		AX = 0.0;
-		AY = 0.0;
-		AZ = 0.0;
-	}
-//	front
-	if (key == 3)
-	{
-		AX = -1.57;
-		AY = 0.0;
-		AZ = 0.0;
-	}
-//	right
-	if (key == 15)
-	{
-		AX = -1.57;
-		AY = 0.0;
-		AZ = 1.57;
-	}
-	//	perspective
-	if (key == 35 && fdf->events.perspective == 0)
-			fdf->events.perspective = 1;
-	else if (key == 35 && fdf->events.perspective == 1)
-			fdf->events.perspective = 0;
-	redraw(fdf);
-	return (0);
-}
-
-int			mouseMove(int x, int y, void *param)
+int			mouse_move(int x, int y, void *param)
 {
 	t_fdf	*fdf;
 
@@ -92,39 +54,35 @@ int			mouseMove(int x, int y, void *param)
 	return (0);
 }
 
-int 		mousePress(int key, int x, int y, void *param)
+int			mouse_press(int key, int x, int y, void *param)
 {
 	t_fdf		*fdf;
 
 	fdf = (t_fdf*)param;
-//	scale
 	if (key == 5)
-			fdf->scale += fdf->scale_mult;
+		fdf->scale += fdf->scale_mult;
 	if (key == 4 && fdf->scale > fdf->scale_mult)
-			fdf->scale -= fdf->scale_mult;
-
-//	shift
+		fdf->scale -= fdf->scale_mult;
 	if (key == 3)
 	{
 		fdf->events.mouse_3_press = 1;
 		fdf->events.mouse_xy.x = x;
 		fdf->events.mouse_xy.y = y;
-		mouseMove(x, y, param);
+		mouse_move(x, y, param);
 	}
-
-//	rotate
 	if (key == 1)
 	{
 		fdf->events.mouse_1_press = 1;
 		fdf->events.mouse_xy.x = x;
 		fdf->events.mouse_xy.y = y;
-		mouseMove(x, y, param);
+		mouse_move(x, y, param);
 	}
-	redraw(fdf);
+	if (key == 5 || key == 4)
+		redraw(fdf);
 	return (0);
 }
 
-int			mouseRelease(int key, int x, int y, void *param)
+int			mouse_release(int key, int x, int y, void *param)
 {
 	t_fdf	*fdf;
 

@@ -6,13 +6,13 @@
 /*   By: rabduras <rabduras@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/08 12:19:58 by rabduras          #+#    #+#             */
-/*   Updated: 2020/01/30 12:06:33 by rabduras         ###   ########.fr       */
+/*   Updated: 2020/01/30 16:33:02 by rabduras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-static void createImage(t_fdf *fdf)
+static void	create_image(t_fdf *fdf)
 {
 	fdf->img.bpp = 32;
 	fdf->img.size_l = WIN_WIDTH * 4;
@@ -22,14 +22,14 @@ static void createImage(t_fdf *fdf)
 	&(fdf->img.bpp), &(fdf->img.endian));
 }
 
-static void createWindow(t_fdf *fdf, char *name)
+static void	create_window(t_fdf *fdf, char *name)
 {
 	fdf->mlx_ptr = mlx_init();
 	fdf->win_ptr = mlx_new_window(fdf->mlx_ptr, WIN_WIDTH,
 		WIN_HEIGHT, ft_strjoin("FdF ", name));
 }
 
-static void	setDefaults(t_fdf *fdf)
+void		set_defaults(t_fdf *fdf)
 {
 	AX = DEF_AX;
 	AY = DEF_AY;
@@ -40,23 +40,24 @@ static void	setDefaults(t_fdf *fdf)
 	fdf->scale_mult = 1;
 }
 
-int main(int argc, char **argv)
+int			main(int argc, char **argv)
 {
 	t_fdf	*fdf;
 
 	if (argc != 2)
 		error("usage: ./fdf [map.fdf]");
-	if (!(fdf = readFile(argv[1])))
+	if (!(fdf = read_file(argv[1])))
 		error("Invalid map or file doesn't exist.");
-	setLinearCoefficients(fdf);
-	createWindow(fdf, argv[1]);
-	createImage(fdf);
-	setDefaults(fdf);
+	set_linear_coefficients(fdf);
+	create_window(fdf, argv[1]);
+	create_image(fdf);
+	set_defaults(fdf);
 	redraw(fdf);
-	mlx_hook(fdf->win_ptr, 2, 0, &keyPress, (void *)fdf);
-	mlx_hook(fdf->win_ptr, 4, 0, &mousePress, (void *)fdf);
-	mlx_hook(fdf->win_ptr, 6, 0, &mouseMove, (void *)fdf);
-	mlx_hook(fdf->win_ptr, 5, 0, &mouseRelease, (void *)fdf);
+	mlx_hook(fdf->win_ptr, 2, 0, &key_press, (void *)fdf);
+	mlx_hook(fdf->win_ptr, 4, 0, &mouse_press, (void *)fdf);
+	mlx_hook(fdf->win_ptr, 6, 0, &mouse_move, (void *)fdf);
+	mlx_hook(fdf->win_ptr, 5, 0, &mouse_release, (void *)fdf);
+	mlx_hook(fdf->win_ptr, 17, 0, &close_window, (void *)fdf);
 	mlx_loop(fdf->mlx_ptr);
 	return (0);
 }

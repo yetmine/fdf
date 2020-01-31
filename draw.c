@@ -6,15 +6,15 @@
 /*   By: rabduras <rabduras@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/27 15:50:04 by rabduras          #+#    #+#             */
-/*   Updated: 2020/01/30 12:08:59 by rabduras         ###   ########.fr       */
+/*   Updated: 2020/01/30 16:31:30 by rabduras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-static void	drawPixel(t_fdf *fdf, int x, int y, int c)
+static void	draw_pixel(t_fdf *fdf, int x, int y, int c)
 {
-	if ( (y >= WIN_HEIGHT) || (x * 4 > fdf->img.size_l) || y < 0 ||
+	if ((y >= WIN_HEIGHT) || (x * 4 > fdf->img.size_l) || y < 0 ||
 			x * 4 < 0)
 		return ;
 	fdf->img.data[y * fdf->img.size_l + x * 4 + 3] =
@@ -27,34 +27,34 @@ static void	drawPixel(t_fdf *fdf, int x, int y, int c)
 		(unsigned char)(c & 0xFF);
 }
 
-static void	drawLine(t_fdf *fdf, t_line line)
+static void	draw_line(t_fdf *fdf, t_line line)
 {
-	t_xy	delta;
+	t_xy	dlt;
 	int		i;
 	float	d;
 
 	if (line.out)
-		return;
-	delta.x = line.x1 - line.x0;
-	delta.y = line.y1 - line.y0;
+		return ;
+	dlt.x = line.x1 - line.x0;
+	dlt.y = line.y1 - line.y0;
 	i = -1;
-	if (abs(delta.x) >= abs(delta.y))
-		while (++i < abs(delta.x))
+	if (abs(dlt.x) >= abs(dlt.y))
+		while (++i < abs(dlt.x))
 		{
-			d = (float)i / delta.x;
-			drawPixel(fdf, line.x0 + copysign(i, delta.x), line.y0 +
-				copysign(round(d * delta.y), delta.y), getColor(fdf, line, delta.x, i));
+			d = (float)i / dlt.x;
+			draw_pixel(fdf, line.x0 + copysign(i, dlt.x), line.y0 +
+			copysign(round(d * dlt.y), dlt.y), get_color(fdf, line, dlt.x, i));
 		}
 	else
-		while (++i < abs(delta.y))
+		while (++i < abs(dlt.y))
 		{
-			d = (float)i / delta.y;
-			drawPixel(fdf, line.x0 + copysign(round(d * delta.x), delta.x),
-				line.y0 + copysign(i, delta.y), getColor(fdf, line, delta.y, i));
+			d = (float)i / dlt.y;
+			draw_pixel(fdf, line.x0 + copysign(round(d * dlt.x), dlt.x),
+			line.y0 + copysign(i, dlt.y), get_color(fdf, line, dlt.y, i));
 		}
 }
 
-static void	drawImage(t_fdf *fdf)
+static void	draw_image(t_fdf *fdf)
 {
 	fdf->current.y = 0;
 	while (fdf->current.y < fdf->map.height)
@@ -63,16 +63,16 @@ static void	drawImage(t_fdf *fdf)
 		while (fdf->current.x < fdf->map.width)
 		{
 			if (fdf->current.x < fdf->map.width - 1)
-				drawLine(fdf, transform(fdf, 1, 0));
+				draw_line(fdf, transform(fdf, 1, 0));
 			if (fdf->current.y < fdf->map.height - 1)
-				drawLine(fdf, transform(fdf, 0, 1));
+				draw_line(fdf, transform(fdf, 0, 1));
 			fdf->current.x++;
 		}
 		fdf->current.y++;
 	}
 }
 
-static void putBackground(t_fdf *fdf)
+static void	put_background(t_fdf *fdf)
 {
 	int	i;
 
@@ -91,7 +91,14 @@ static void putBackground(t_fdf *fdf)
 
 void		redraw(t_fdf *fdf)
 {
-	putBackground(fdf);
-	drawImage(fdf);
-	mlx_put_image_to_window(fdf->mlx_ptr, fdf->win_ptr, fdf->img.img_ptr, 0, 0);
+	put_background(fdf);
+	if (fdf->events.help == 1)
+		help_menu(fdf);
+	else
+	{
+		draw_image(fdf);
+		mlx_put_image_to_window(fdf->mlx_ptr, fdf->win_ptr,
+			fdf->img.img_ptr, 0, 0);
+		help_text(fdf);
+	}
 }
