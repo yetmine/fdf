@@ -6,7 +6,7 @@
 /*   By: rabduras <rabduras@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/10 13:11:56 by rabduras          #+#    #+#             */
-/*   Updated: 2020/01/31 13:45:23 by rabduras         ###   ########.fr       */
+/*   Updated: 2020/01/31 16:13:57 by rabduras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,9 @@ static t_fdf	*parse_data(int fd, t_fdf *fdf)
 			fdf->map.data_conv[i][j] = (double)fdf->map.data[i][j];
 			ft_strdel(&split[j]);
 		}
-		i++;
 		free(split);
+		ft_strdel(&line);
+		i++;
 	}
 	return (fdf);
 }
